@@ -158,6 +158,103 @@
       font-weight: 600;
       color: #999;
     }
+
+    #signature-50 {
+      margin-top: 40px;
+      width: 1097px;
+      height: 334px;
+      display: none;
+      align-items: center;
+      background: #ffffff !important;
+      border-radius: 0px;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      position: relative;
+      color: #000000 !important;
+    }
+
+    #signature-50 .red-bar {
+      width: 50px;
+      height: 100%;
+      background: #c40000;
+      flex-shrink: 0;
+    }
+
+    #signature-50 .content {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 30px 20px 30px 20px;
+      flex-grow: 1;
+      margin-left: auto;
+      justify-content: flex-end;
+    }
+
+    #signature-50 .fifty-logo {
+      width: 260px;
+      flex-shrink: 0;
+    }
+
+    #signature-50 .fifty-logo img {
+      width: 100%;
+    }
+
+    #signature-50 .separator {
+      width: 2px;
+      height: 280px;
+      background: #c40000;
+      flex-shrink: 0;
+      margin-right: 20px;
+    }
+
+    #signature-50 .left-section {
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+      flex-grow: 1;
+    }
+
+    #signature-50 .icons {
+      display: none;
+    }
+
+    #signature-50 .info {
+      color: #1a1a1a;
+      flex-grow: 1;
+    }
+
+    #signature-50 .name {
+      font-weight: bold;
+      font-size: 40px;
+      color: #000000;
+      margin-bottom: 8px;
+    }
+
+    #signature-50 .role {
+      font-weight: 600;
+      font-size: 26px;
+      color: #1a1a1a;
+      margin-bottom: 20px;
+    }
+
+    #signature-50 .line {
+      font-size: 20px;
+      color: #2a2a2a;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    #signature-50 .line img {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+    }
+
+    #signature-50 .right-bar {
+      display: none;
+    }
   </style>
 </head>
 <body>
@@ -189,6 +286,12 @@
 
               <label for="address">Endereço (opcional):</label>
               <textarea id="address" rows="2" placeholder="Rod. PR 170 Km 08&#10;Bairro Boqueirão - Guarapuava/PR"></textarea>
+
+              <label for="modelo" style="margin-top: 20px;">Escolha o modelo:</label>
+              <select id="modelo" style="width: 100%; padding: 10px; font-size: 1em; border-radius: 6px; border: 1px solid #666; background: #444; color: #ddd;">
+                <option value="1">Modelo Padrão</option>
+                <option value="2">Modelo 50 Anos</option>
+              </select>
             </fieldset>
           </td>
         </tr>
@@ -196,6 +299,8 @@
     </center>
 
     <center><button id="generateBtn">Gerar Assinatura</button></center>
+
+    <center><button id="exportBtn" style="display:none;">Exportar como Imagem</button></center>
 
     <div id="signature-preview" style="display:none;">
       <div class="logo">
@@ -213,8 +318,34 @@
         </div>
       </div>
     </div>
-
-    <center><button id="exportBtn" style="display:none;">Exportar como Imagem</button></center>
+    <div id="signature-50" style="display:none;">
+      <div class="red-bar"></div>
+      <div class="content">
+        <div class="fifty-logo">
+          <img src="foto/cascavel  (1).png" alt="50 Anos Itax" />
+        </div>
+        <div class="separator"></div>
+        <div class="left-section">
+          <div class="info">
+            <div class="name" id="sig50-name">Nome Aqui</div>
+            <div class="role" id="sig50-role">Função Aqui</div>
+            <div class="line" id="sig50-contact">
+              <img src="foto/phone.png" alt="Telefone" />
+              <span id="sig50-contact-text">(xx) x xxxx-xxxx</span>
+            </div>
+            <div class="line" id="sig50-email">
+              <img src="foto/mail.png" alt="Email" />
+              <span id="sig50-email-text">exemplo@itax.com.br</span>
+            </div>
+            <div class="line" id="sig50-address">
+              <img src="foto/location.png" alt="Localização" />
+              <span id="sig50-address-text">Rod. PR 170 Km 08<br>Bairro Boqueirão - Guarapuava/PR</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="right-bar"></div>
+    </div>
   </div>
 
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
@@ -227,13 +358,21 @@
 
   const generateBtn = document.getElementById('generateBtn');
   const exportBtn = document.getElementById('exportBtn');
+  const modelSelect = document.getElementById('modelo');
 
   const signaturePreview = document.getElementById('signature-preview');
+  const signature50 = document.getElementById('signature-50');
   const sigName = document.getElementById('sig-name');
   const sigRole = document.getElementById('sig-role');
   const sigContact = document.getElementById('sig-contact');
   const sigEmail = document.getElementById('sig-email');
   const sigAddress = document.getElementById('sig-address');
+
+  const sig50Name = document.getElementById('sig50-name');
+  const sig50Role = document.getElementById('sig50-role');
+  const sig50Contact = document.getElementById('sig50-contact');
+  const sig50Email = document.getElementById('sig50-email');
+  const sig50Address = document.getElementById('sig50-address');
 
   const defaultAddress = `Rod. PR 170 Km 08<br>Bairro Boqueirão - Guarapuava/PR`;
 
@@ -249,37 +388,75 @@
       return;
     }
 
-    sigName.textContent = name;
-    sigRole.textContent = role;
-    sigContact.textContent = 'Contato: ' + contact;
-    sigEmail.textContent = 'E-mail: ' + email;
+    // Ocultar ambos os modelos
+    signaturePreview.style.display = 'none';
+    signature50.style.display = 'none';
 
-    // Se endereço vazio, usa padrão; senão usa o que foi digitado (convertendo quebras para <br>)
-    if (address === '') {
-      sigAddress.innerHTML = defaultAddress;
+    if (modelSelect.value === '1') {
+      // Modelo Padrão
+      sigName.textContent = name;
+      sigRole.textContent = role;
+      sigContact.textContent = 'Contato: ' + contact;
+      sigEmail.textContent = 'E-mail: ' + email;
+
+      if (address === '') {
+        sigAddress.innerHTML = defaultAddress;
+      } else {
+        sigAddress.innerHTML = address.replace(/\n/g, '<br>');
+      }
+
+      signaturePreview.style.display = 'flex';
     } else {
-      sigAddress.innerHTML = address.replace(/\n/g, '<br>');
+      // Modelo 50 Anos
+      sig50Name.textContent = name;
+      sig50Role.textContent = role;
+      document.getElementById('sig50-contact-text').textContent = contact;
+      document.getElementById('sig50-email-text').textContent = email;
+
+      if (address === '') {
+        document.getElementById('sig50-address-text').innerHTML = defaultAddress;
+      } else {
+        document.getElementById('sig50-address-text').innerHTML = address.replace(/\n/g, '<br>');
+      }
+
+      signature50.style.display = 'flex';
     }
 
-    signaturePreview.style.display = 'flex';
     exportBtn.style.display = 'inline-block';
   });
 
   exportBtn.addEventListener('click', () => {
-    html2canvas(signaturePreview).then(canvas => {
+    const target = modelSelect.value === '1' ? signaturePreview : signature50;
+    const width = 1097;
+    const height = 334;
+
+    // Se é modelo 50 anos, usar fundo branco
+    const bgColor = modelSelect.value === '2' ? '#ffffff' : null;
+
+    html2canvas(target, {
+      backgroundColor: bgColor,
+      scale: 2,
+      useCORS: true,
+      allowTaint: true,
+      logging: false
+    }).then(canvas => {
       const resizedCanvas = document.createElement('canvas');
-      resizedCanvas.width = 1097;
-      resizedCanvas.height = 334;
+      resizedCanvas.width = width;
+      resizedCanvas.height = height;
       const ctx = resizedCanvas.getContext('2d');
-      ctx.drawImage(canvas, 0, 0, 1097, 334);
+      ctx.drawImage(canvas, 0, 0, width, height);
       const link = document.createElement('a');
       link.download = 'assinatura-itax.png';
       link.href = resizedCanvas.toDataURL('image/png');
       link.click();
     });
   });
+
+  // Gerar assinatura automaticamente ao trocar o modelo
+  modelSelect.addEventListener('change', () => {
+    generateBtn.click();
+  });
 </script>
 </body>
 </html>
-
 
